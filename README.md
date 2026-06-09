@@ -1,87 +1,144 @@
-# ♔ V-Max Chess Analysis Platform
-
 <div align="center">
-  <h3><strong>Chuyên gia phân tích cờ vua AI & Đào tạo chiến thuật chuẩn Đại Kiện Tướng</strong></h3>
-  <p>Một nền tảng phân tích ván cờ (PGN) chuyên nghiệp, tích hợp engine Stockfish 18 NNUE qua Web Workers, cung cấp những đánh giá chi tiết theo chuẩn Chess.com và sự dẫn dắt chiến thuật từ AI Coach (LLM).</p>
+
+# ♔ V-Max Chess Analysis Platform
+**Nền tảng Phân tích & Huấn luyện Cờ vua AI Chuyên Nghiệp**
+
+[![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF.svg)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![Stockfish](https://img.shields.io/badge/Engine-Stockfish%2018%20NNUE-green.svg)](https://stockfishchess.org/)
+[![TailwindCSS](https://img.shields.io/badge/Styling-TailwindCSS-38B2AC.svg)](https://tailwindcss.com/)
+
 </div>
 
 ---
 
-## 🚀 Giới thiệu (Overview)
+## 📖 Mục lục (Table of Contents)
+1. [Giới thiệu Chung (Overview)](#1-giới-thiệu-chung-overview)
+2. [Chi tiết Kiến trúc Hệ thống (Architecture)](#2-chi-tiết-kiến-trúc-hệ-thống-architecture)
+3. [Thuật toán Đánh giá Nước đi (Evaluation Algorithms)](#3-thuật-toán-đánh-giá-nước-đi-evaluation-algorithms)
+4. [Mô hình AI Huấn luyện viên (AI Coach)](#4-mô-hình-ai-huấn-luyện-viên-ai-coach)
+5. [Hướng dẫn Cài đặt Cục bộ (Local Setup)](#5-hướng-dẫn-cài-đặt-cục-bộ-local-setup)
+6. [Hướng dẫn Sử dụng (User Guide)](#6-hướng-dẫn-sử-dụng-user-guide)
+7. [Lộ trình Phát triển (Roadmap)](#7-lộ-trình-phát-triển-roadmap)
 
-**V-Max Chess** (thư mục `Chess GM Insights`) là một ứng dụng web mô phỏng trải nghiệm phân tích cờ vua ở cấp độ cao nhất. Thay vì chỉ hiển thị biểu đồ lợi thế đơn thuần, ứng dụng đi sâu vào từng nước đi, chấm điểm độ chính xác (Accuracy), phát hiện các nước cờ Thiên tài (Brilliant), Lỗi nặng (Blunder), và đặc biệt sử dụng **Mô hình Ngôn ngữ Lớn (LLM)** kết hợp dữ liệu chiến thuật để giải thích lý do tại sao một nước cờ lại sai lầm.
+---
 
-## ✨ Các Tính Năng Nổi Bật (Core Features)
+## 1. Giới thiệu Chung (Overview)
 
-- **🧠 Phân tích Đa luồng (Multi-threaded Analysis):** Tích hợp Web Worker chạy ngầm Stockfish 18 / 16 NNUE. Xử lý hàng loạt nước đi cùng lúc (Batching) với độ sâu phân tích (Depth) lên đến 18 mà không làm đơ trình duyệt.
-- **🎯 Chấm điểm Chuẩn xác (Accuracy & Classification):** Áp dụng công thức tính tỷ lệ thắng (Win Probability) kiểu CAPS2 của Chess.com. Tự động dán nhãn các nước đi: *Book (Lý thuyết), Brilliant (Thiên tài), Best (Tuyệt vời), Inaccuracy (Không chính xác), Mistake (Lỗi), Blunder (Lỗi nặng).*
-- **🤖 Huấn luyện viên AI (Data-Grounded AI Coach):** Không giống các chatbot AI thông thường hay "bịa" nước đi, AI Coach của V-Max được nối thẳng với metadata chiến thuật của Stockfish. AI sẽ giải thích chính xác các đòn ghim (pin), xiên (skewer) hay chiếu bí (mate) có thật trong ván cờ.
-- **⚔️ Đấu tập Thích ứng (Adaptive Sparring):** Chế độ đấu tập tự động lấy Elo của người dùng từ PGN và thiết lập độ khó (Skill Level) của Stockfish chênh lệch +150 Elo, tạo ra môi trường rèn luyện hoàn hảo.
-- **📊 Bảng Điều Khiển Trực Quan (Interactive UI/UX):** 
-  - Biểu đồ lợi thế phẳng (Evaluation Chart).
-  - Bàn cờ tùy chỉnh giao diện (Chessground) với mũi tên và vòng sáng (Highlight).
-  - Tích hợp âm thanh nước đi chuẩn xác.
-- **📚 Tự động Tạo Câu đố (Puzzle Generation & SM-2):** Các nước đi Blunder/Mistake sẽ được tự động lưu lại thành câu đố. Tích hợp thuật toán lặp lại ngắt quãng (Spaced Repetition SM-2) để giúp người chơi học từ sai lầm.
+**V-Max Chess** (mã nguồn đặt tại thư mục `Chess GM Insights`) không chỉ là một bàn cờ web đơn giản. Nó là một cỗ máy mô phỏng chính xác hệ thống Game Review phức tạp của Chess.com và Lichess, dành riêng cho những kỳ thủ muốn thấu hiểu triệt để từng điểm mạnh yếu trong ván cờ của mình.
 
-## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
+Dự án kết hợp sức mạnh tính toán thô của **Stockfish 18 NNUE** với khả năng tư duy ngôn ngữ của **LLM (Large Language Models)** nhằm mang lại trải nghiệm huấn luyện 1-kèm-1 (One-on-one Coaching) tự động hoàn toàn.
 
-* **Frontend:** React 18, Vite, TypeScript.
-* **UI & Styling:** Tailwind CSS, Lucide Icons, Shadcn UI, framer-motion (Hiệu ứng mượt mà).
-* **Chess Logic & Board:** `chess.js` (xử lý logic, PGN), `chessground` (hiển thị bàn cờ hiệu năng cao).
-* **Engine:** Stockfish.js (WASM/JavaScript) giao tiếp qua Web Workers.
-* **Backend/Auth:** Supabase, Edge Functions (cho LLM AI Coach).
+---
 
-## 📥 Hướng dẫn Cài đặt & Chạy cục bộ (Local Setup)
+## 2. Chi tiết Kiến trúc Hệ thống (Architecture)
 
-Đảm bảo máy tính của bạn đã cài đặt **Node.js** (v18 trở lên).
+Hệ thống được thiết kế theo mô hình Micro-frontend & Web Worker chạy ngầm để đảm bảo hiệu năng 60 FPS bất chấp khối lượng tính toán khổng lồ.
 
+### A. Engine Pool (Quản lý luồng Stockfish)
+- Thay vì chặn luồng chính (Main Thread) của trình duyệt, hệ thống spawn ra một mảng các **Web Workers** (`stockfish.worker.ts`).
+- **Batching & Chunking:** Tệp PGN khi được tải lên sẽ được băm (parse) thành một mảng các `fen`. Mảng này được chia thành các lô (batch) từ 2-4 nước đi và đẩy vào Engine Pool.
+- **Tính năng Đa luồng (MultiPV & Depth):** Mỗi Worker chạy lệnh `go depth 18` kết hợp `MultiPV 2` để không chỉ tìm nước đi xuất sắc nhất, mà còn tìm nước đi tốt thứ hai nhằm tính toán độ phức tạp của thế cờ (Criticality).
+- **Absolute Normalization:** Để khắc phục hạn chế truyền thống của UCI protocol (điểm `cp` phụ thuộc vào bên chuẩn bị đi), Worker đã được tiêm thuật toán chuẩn hóa: Mọi điểm `cp` và `mate` trả về React đều được quy đổi tuyệt đối về góc nhìn của Trắng.
+
+### B. UI / UX & Rendering
+- **Bàn cờ `chessground`:** Sử dụng thư viện `chessground` gốc với custom SVG injection để có các hiệu ứng mũi tên, highlight vùng đi (Glassmorphism highlight).
+- **Đồ thị Evaluation (Recharts):** Render đồ thị lợi thế phẳng theo thời gian thực dọc theo trục tọa độ (Y-axis giới hạn từ -6 đến +6 pawns).
+
+---
+
+## 3. Thuật toán Đánh giá Nước đi (Evaluation Algorithms)
+
+V-Max Chess tự hào sở hữu hệ thống dán nhãn nước đi tinh vi, sử dụng công thức chuyển đổi **Centipawn (CP) sang Win Probability (WP)** (tỷ lệ thắng) được hiệu chuẩn từ hàng triệu ván cờ Lichess.
+
+### Công thức Tính Tỷ lệ thắng (WP)
+```typescript
+function winProb(cp: number): number {
+  return 1 / (1 + Math.exp(-0.00368208 * cp));
+}
+```
+
+### Tiêu chuẩn Phân loại Nước đi (Move Classification Matrix)
+Hệ thống tính toán biến số `delta` (Độ hao hụt điểm lợi thế sau khi đi cờ) để dán nhãn:
+1. 📖 **Book (Lý thuyết):** Nằm trong 12 plies đầu tiên, duy trì thế trận cân bằng (`Math.abs(eval) <= 80`) và không sụt giảm lợi thế.
+2. ‼ **Brilliant (Thiên tài):** Là nước đi tốt nhất do Engine đề xuất, mang tính chất "hy sinh" (Sacrifice) quân có giá trị cao nhưng làm tăng đột biến Win Probability.
+3. ★ **Best (Tuyệt vời):** Hoàn toàn khớp với đề xuất #1 của Stockfish.
+4. 👍 **Excellent (Rất tốt):** Mất đi không quá 0.1 pawns (`delta <= 10`).
+5. ✓ **Good (Tốt):** Mất đi không quá 0.3 pawns (`delta <= 30`).
+6. ?! **Inaccuracy (Không chính xác):** Mất đi từ 0.6 đến 1.2 pawns.
+7. ❓ **Mistake (Lỗi):** Mất đi từ 1.2 đến 2.0 pawns.
+8. ⁇ **Blunder (Lỗi nặng):** Điểm sụt giảm kinh hoàng (>2.0 pawns) trong một thế cờ mà người chơi đáng lẽ có thể kiểm soát.
+
+---
+
+## 4. Mô hình AI Huấn luyện viên (AI Coach)
+
+Trái tim của tính năng huấn luyện nằm ở **Data-Grounded LLM Coaching Pipeline**.
+
+- Tránh tình trạng AI "Hallucination" (ảo giác, nói nhảm nước cờ không có thực), hệ thống không cho phép AI tự tính toán logic cờ vua.
+- Trình phân tích `detectTactics` quét qua PGN và xuất ra metadata: (Ví dụ: `Fork detected at e5`, `Pin discovered against King`).
+- Metadata này cùng với `eval` được tiêm thẳng vào **System Prompt** của AI. AI lúc này chỉ đóng vai trò là một "biên dịch viên", dùng ngôn từ sư phạm mềm mỏng để giải thích metadata thô thiển của Stockfish cho người dùng hiểu.
+
+---
+
+## 5. Hướng dẫn Cài đặt Cục bộ (Local Setup)
+
+### Yêu cầu cấu hình:
+- Node.js (v18+).
+- Git.
+- Một tài khoản Supabase (Tùy chọn nếu muốn lưu trữ ván cờ lên mây).
+- API Key của Groq (Llama-3) hoặc Google Gemini.
+
+### Các bước Cài đặt:
 ```bash
-# 1. Clone kho lưu trữ
+# 1. Tải bộ mã nguồn từ Github
 git clone https://github.com/tri7726/Chess.git
 cd Chess/"Chess GM Insights"
 
-# 2. Cài đặt các gói phụ thuộc
+# 2. Cài đặt toàn bộ thư viện NPM
 npm install
 
-# 3. Cấu hình biến môi trường
-# Copy file .env.example thành .env và điền các khóa API của bạn
-# Yêu cầu: GROQ_API_KEY hoặc GEMINI_API_KEY cho AI Coach
+# 3. Môi trường phát triển (Environment Variables)
+# - Sao chép file .env.example thành .env
+# - Mở file .env và điền các khóa bí mật của bạn:
+# VITE_GROQ_API_KEY=gsk_xxx
+# VITE_GEMINI_API_KEY=AIza_xxx
 cp .env.example .env
 
-# 4. Khởi chạy máy chủ phát triển
+# 4. Khởi động Vite Development Server
 npm run dev
 ```
-Ứng dụng sẽ chạy tại địa chỉ: `http://localhost:8080` (hoặc một port tương đương do Vite cấp).
-
-## 📂 Cấu trúc Thư mục (Folder Structure)
-
-```text
-Chess/
-├── Chess GM Insights/
-│   ├── src/
-│   │   ├── features/       # Các module tính năng (analysis, game, ai-coach, training...)
-│   │   ├── routes/         # Hệ thống định tuyến file-based routing
-│   │   ├── shared/         # Chứa các component dùng chung (ChessBoard, UI components)
-│   │   │   └── workers/    # Nơi chứa stockfish.worker.ts (Engine Pool)
-│   │   ├── styles.css      # CSS cấu hình màu sắc, theme bàn cờ, Tailwind
-│   │   └── server.ts       # Backend API/Xử lý LLM
-│   ├── package.json
-│   └── vite.config.ts
-└── Upgrade Tracker/        # Chứa tài liệu theo dõi tiến độ, ý tưởng kiến trúc hệ thống
-```
-
-## 🐛 Khắc phục Lỗi Thường Gặp (Troubleshooting)
-
-* **Bàn cờ bị tràn viền (Huge SVGs):** Hãy chắc chắn rằng bạn không vô tình xóa các class `cg-wrap`, `cg-board-brown` trong thẻ bọc của `ChessBoard`.
-* **Biểu đồ Evaluation nằm phẳng lỳ (Flatline ở 0.0):** Xảy ra khi Web Worker bị timeout. Đảm bảo `timeoutMs` trong `engine-pool.ts` được đặt ít nhất `30000` (30 giây).
-* **Quá nhiều nước đi "Excellent" ở đầu ván:** Cấu trúc đã được vá bằng thuật toán Theory (Book). Nếu bạn vẫn thấy lỗi, hãy chắc chắn nhánh code của bạn là mới nhất.
-
-## 🔮 Lộ trình Phát triển (Roadmap)
-- [x] Sửa lỗi đồng bộ dữ liệu Stockfish (Góc nhìn Trắng/Đen).
-- [x] Tích hợp AI giải thích nước cờ.
-- [ ] Chế độ Self-Analysis Mode (Tự do di chuyển quân để xem đánh giá real-time).
-- [ ] Tích hợp Lichess Opening Explorer Database.
-- [ ] Màn hình chờ (Loading Overlay) mượt mà khi đang Analyzing.
 
 ---
-*Phát triển và hoàn thiện bởi V-Max Team. Chúc bạn lên tay và sớm đạt cấp độ Đại Kiện Tướng!*
+
+## 6. Hướng dẫn Sử dụng (User Guide)
+
+1. **Upload Game (Tải ván cờ):** 
+   - Nhấn nút `Upload New PGN` ở góc phải màn hình.
+   - Paste đoạn PGN chuẩn từ Chess.com hoặc Lichess vào. 
+   - *Lưu ý:* Hệ thống sẽ tự bóc tách `[TimeControl]` để phân tích áp lực thời gian của bạn (Rushed / Calculation Error).
+2. **Quá trình Analyzing:**
+   - Hệ thống Web Worker sẽ bắt đầu chia nhỏ ván cờ để Stockfish chạy ngầm. Vui lòng giữ nguyên trình duyệt (khoảng 15-30 giây tùy độ phức tạp của ván cờ).
+3. **Đọc Báo cáo:**
+   - **Accuracies & Elo Performance:** Đánh giá độ chính xác tổng thể và quy đổi ra mức độ thi đấu (Ví dụ: Chơi như Elo 1800).
+   - Click vào bất cứ thanh biểu đồ nào để dịch chuyển bàn cờ ngay lập tức tới khoảnh khắc đó.
+   - Nhấn `Hỏi Đại kiện tướng Coach` ở những nước đi màu Đỏ (Blunder) để AI giải thích lỗi sai.
+
+---
+
+## 7. Lộ trình Phát triển (Roadmap)
+
+Dự án vẫn đang được V-Max Team tích cực cải tiến mỗi tuần. Dưới đây là các nâng cấp chuẩn bị ra mắt:
+
+### Phase 1: Mở rộng tính linh hoạt (Sắp tới)
+- [ ] Tính năng **Self-Analysis Mode**: Cho phép cầm quân cờ di chuyển tự do trên bàn cờ sau khi phân tích xong để xem điểm `cp` thay đổi theo thời gian thực.
+- [ ] Tính năng **Lichess Opening Explorer**: Hiện thị thông số Tỷ lệ Thắng/Hòa/Thua của hàng triệu ván cờ Grandmaster ứng với khai cuộc đang chơi trên bàn.
+- [ ] Tính năng **Loading Overlay**: Màn hình chờ vô hiệu hóa click khi đang phân tích để chặn các lỗi UI bất đồng bộ.
+
+### Phase 2: Game Hóa (Gamification)
+- [ ] Tích hợp thuật toán lặp lại ngắt quãng (SM-2) để tự động xuất các nước cờ Blunder thành bộ thẻ Flashcard (Puzzles).
+- [ ] Multi-tier Subscription (Giới hạn số lần phân tích Depth 18 cho tài khoản Free).
+
+---
+*Mã nguồn mở được đóng góp bởi Cộng đồng. Chúc bạn có những phút giây rèn luyện chiến thuật tuyệt vời!*
