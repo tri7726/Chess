@@ -1,0 +1,227 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Chessground CSS — imported globally to avoid SSR issues */
+@import "chessground/assets/chessground.base.css";
+@import "chessground/assets/chessground.brown.css";
+@import "chessground/assets/chessground.cburnett.css";
+
+
+
+@custom-variant dark (&:is(.dark *));
+
+/* V-Max design system — chess.com-inspired dark UI with violet accent */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-board-light: var(--board-light);
+  --color-board-dark: var(--board-dark);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.625rem;
+  /* Dark by default — V-Max ships dark */
+  --background: oklch(0.201 0.04 285);     /* ~#1a1a2e */
+  --foreground: oklch(0.97 0.005 285);
+  --card: oklch(0.245 0.04 285);
+  --card-foreground: oklch(0.97 0.005 285);
+  --popover: oklch(0.245 0.04 285);
+  --popover-foreground: oklch(0.97 0.005 285);
+  --primary: oklch(0.553 0.243 297);       /* ~#7c3aed */
+  --primary-foreground: oklch(0.99 0.005 285);
+  --secondary: oklch(0.30 0.035 285);
+  --secondary-foreground: oklch(0.97 0.005 285);
+  --muted: oklch(0.27 0.03 285);
+  --muted-foreground: oklch(0.70 0.02 285);
+  --accent: oklch(0.34 0.06 297);
+  --accent-foreground: oklch(0.97 0.005 285);
+  --destructive: oklch(0.62 0.23 25);
+  --destructive-foreground: oklch(0.99 0.005 285);
+  --success: oklch(0.68 0.17 152);
+  --warning: oklch(0.78 0.16 80);
+  --border: oklch(0.32 0.03 285);
+  --input: oklch(0.30 0.03 285);
+  --ring: oklch(0.553 0.243 297);
+  --board-light: oklch(0.78 0.02 80);
+  --board-dark: oklch(0.42 0.04 60);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom Chessground Arrow styling for best moves */
+.cg-wrap cb-arrow.blue {
+  stroke: rgba(59, 130, 246, 0.85) !important;
+  stroke-width: 0.16px !important;
+}
+.cg-wrap cb-arrow.blue marker path {
+  fill: rgba(59, 130, 246, 0.85) !important;
+}
+.cg-wrap cb-arrow.blue marker {
+  fill: rgba(59, 130, 246, 0.85) !important;
+}
+
+/* Eval Bar styling */
+.eval-bar-vertical {
+  width: 28px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-muted);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: 1.5px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+/* Chess.com-style square highlights */
+.highlight-brilliant {
+  background-color: rgba(6, 182, 212, 0.4) !important; /* Cyan */
+}
+.highlight-great {
+  background-color: rgba(79, 70, 229, 0.4) !important; /* Indigo */
+}
+.highlight-best {
+  background-color: rgba(16, 185, 129, 0.35) !important; /* Emerald */
+}
+.highlight-excellent {
+  background-color: rgba(34, 197, 94, 0.3) !important; /* Green */
+}
+.highlight-good {
+  background-color: rgba(20, 184, 166, 0.3) !important; /* Teal */
+}
+.highlight-okay {
+  background-color: rgba(113, 113, 122, 0.3) !important; /* Zinc */
+}
+.highlight-forced {
+  background-color: rgba(113, 113, 122, 0.15) !important; /* Semi-transparent zinc */
+}
+.highlight-inaccuracy {
+  background-color: rgba(245, 158, 11, 0.3) !important; /* Amber */
+}
+.highlight-mistake {
+  background-color: rgba(249, 115, 22, 0.35) !important; /* Orange */
+}
+.highlight-missed {
+  background-color: rgba(239, 68, 68, 0.3) !important; /* Semi-transparent red */
+}
+.highlight-blunder {
+  background-color: rgba(220, 38, 38, 0.4) !important; /* Red */
+}
+.highlight-theory {
+  background-color: rgba(180, 83, 9, 0.3) !important; /* Brown */
+}
+
+/* Move badge styling */
+.move-badge {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  pointer-events: none; /* Let clicks pass through to the square */
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.stats-row-hover {
+  transition: background-color 0.2s ease;
+}
+.stats-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Shake animation for blunders */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Subtle pulse animation for premium active states */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.006); }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 2.5s infinite ease-in-out;
+}
+
+/* Smooth slide up & fade in */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease-out forwards;
+}
+
+/* Scan line effect for board analysis */
+@keyframes scan {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+.animate-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.6), transparent);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+  animation: scan 4s infinite linear;
+  pointer-events: none;
+}
+
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-muted-foreground);
+}
+
